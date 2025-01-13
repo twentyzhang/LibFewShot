@@ -10,7 +10,7 @@ def compute_afr_loss(
     labels: torch.Tensor,         # (N*(K + β),)
     way_num: int,                 # N
     shot_num: int,                # K
-    beta: int,                    # β
+    beta: int = 3,                    # β
     mu1: float = 5.0,             # 权重 µ1
     mu2: float = 20.0,            # 权重 µ2
     tau: float = 0.05             # 温度系数 τ
