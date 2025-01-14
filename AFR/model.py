@@ -224,7 +224,7 @@ class AFRClassifier(nn.Module):
         # 最终线性层: (d -> num_classes)
         self.fc = nn.Linear(d, num_classes)
 
-    def forward(self, support_features: torch.Tensor, P: torch.Tensor):
+    def forward(self, support_features: torch.Tensor, P: torch.Tensor, train = True):
         """
         参数:
             support_features: (way_num * shot_num, d)
@@ -235,14 +235,20 @@ class AFRClassifier(nn.Module):
             Hs:     shape (way_num, shot_num + beta_s, d),
             P_bar:  shape (way_num, beta_s, d)
         """
-        # 1) 调用 AFR 得到校正后的原型 P_bar 和组合特征 Hs
-        P_bar, Hs = self.afr(support_features, P)
+        if train == True:
+            # 1) 调用 AFR 得到校正后的原型 P_bar 和组合特征 Hs
+            P_bar, Hs = self.afr(support_features, P)
 
-        # 2) 展平 Hs 送入线性层得到 logits
-        Hs_flat = Hs.view(-1, Hs.size(-1))  # => (way_num*(shot_num + beta_s), d)
-        logits = self.fc(Hs_flat)          # => (way_num*(shot_num + beta_s), num_classes)
+            # 2) 展平 Hs 送入线性层得到 logits
+            Hs_flat = Hs.view(-1, Hs.size(-1))  # => (way_num*(shot_num + beta_s), d)
+            logits = self.fc(Hs_flat)          # => (way_num*(shot_num + beta_s), num_classes)
 
-        return logits, P_bar, Hs      
+            return logits, P_bar, Hs 
+        else:
+            logits = self.fc(support_features)
+
+            return logits
+           
 
 
 
