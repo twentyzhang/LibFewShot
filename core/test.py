@@ -46,6 +46,7 @@ class Test(object):
         print(config)
         self.model, self.model_type = self._init_model(config)
         self.test_loader = self._init_dataloader(config)
+        self.model, self.model_type = self._init_model(config, self.test_loader)
 
     def test_loop(self):
         """
@@ -266,7 +267,7 @@ class Test(object):
             self.config["test_episode"], self.config["episode_size"]
         )
 
-    def _init_model(self, config):
+    def _init_model(self, config, class_label_dict=None):
         """
         Init model (backbone+classifier) from the config dict and load the best checkpoint, then parallel if necessary .
 
@@ -286,6 +287,8 @@ class Test(object):
             "test_query": config["test_query"],
             "emb_func": emb_func,
             "device": self.device,
+            "data_root": config['data_root'],
+            "class_label_dict": class_label_dict
         }
         model = get_instance(arch, "classifier", config, **model_kwargs)
 

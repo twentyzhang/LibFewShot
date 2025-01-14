@@ -61,6 +61,7 @@ class Trainer(object):
             self.val_loader,
             self.test_loader,
         ) = self._init_dataloader(config)
+        self.model, self.model_type = self._init_model(config, self.train_loader)
         (
             self.optimizer,
             self.scheduler,
@@ -397,7 +398,7 @@ class Trainer(object):
 
         return train_loader, val_loader, test_loader
 
-    def _init_model(self, config):
+    def _init_model(self, config, class_label_dict=None):
         """
         Init model(backbone+classifier) from the config dict and load the pretrained params or resume from a
         checkpoint, then parallel if necessary .
@@ -418,6 +419,8 @@ class Trainer(object):
             "test_query": config["test_query"],
             "emb_func": emb_func,
             "device": self.device,
+            "data_root": config['data_root'],
+            "class_label_dict": class_label_dict
         }
         model = get_instance(arch, "classifier", config, **model_kwargs)
 
