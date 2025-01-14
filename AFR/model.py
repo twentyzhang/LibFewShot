@@ -247,6 +247,7 @@ class AFRClassifier(nn.Module):
         else:
             logits = self.fc(support_features)
 
+
             return logits
            
 
